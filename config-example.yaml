@@ -1,0 +1,823 @@
+#╔══════════════════════════════════════════════════════════════════════════════╗
+#║                                                                              ║
+#║           🤖 DISCORD AI BOT v2 - CONFIGURAÇÃO COMPLETA                       ║
+#║                                                                              ║
+#╚══════════════════════════════════════════════════════════════════════════════╝
+#
+# 📝 COMO USAR:
+#   1. Copie este arquivo para config.yaml
+#   2. Preencha suas chaves API (ou use variáveis de ambiente)
+#   3. Configure os provedores que deseja usar
+#   4. Ajuste as configurações padrão
+#
+# 🔐 VARIÁVEIS DE AMBIENTE (recomendado para tokens):
+#   DISCORD_BOT_TOKEN, OPENAI_API_KEY, etc
+#   Veja .env.example para lista completa
+#
+#════════════════════════════════════════════════════════════════════════════════
+
+
+#╔══════════════════════════════════════════════════════════════════════════════╗
+#║ 1. CONFIGURAÇÕES DO BOT DISCORD                                              ║
+#╚══════════════════════════════════════════════════════════════════════════════╝
+
+bot:
+  # Token do bot (obrigatório) - use DISCORD_BOT_TOKEN no .env
+  token: ""
+  
+  # Client ID do bot (para comandos slash) - use DISCORD_CLIENT_ID no .env
+  client_id: ""
+  
+  # Status do bot
+  status:
+    message: "🤖 IA Avançada | /ajuda"
+    type: "watching"  # playing, listening, watching, competing
+    rotate: true      # Rotacionar status automaticamente
+    interval: 300     # Segundos entre rotações
+  
+  # Atividade padrão
+  activity:
+    - { type: "watching", text: "🤖 IA Avançada | /ajuda" }
+    - { type: "playing",  text: "💬 Conversas Inteligentes" }
+    - { type: "listening", text: "🎭 Personas Customizáveis" }
+    - { type: "watching", text: "🖼️ Geração de Imagens" }
+    - { type: "competing", text: "🏆 {guild_count} servidores" }
+
+
+#╔══════════════════════════════════════════════════════════════════════════════╗
+#║ 2. DONO DO BOT (SUPER ADMIN)                                                 ║
+#╚══════════════════════════════════════════════════════════════════════════════╝
+
+owner:
+  # ID do Discord do dono do bot (tem acesso total, sem limites)
+  user_id: 0
+  
+  # Comandos exclusivos do dono:
+  # - /owner broadcast <mensagem> - Envia mensagem para todos os servidores
+  # - /owner shutdown - Desliga o bot
+  # - /owner reload - Recarrega cogs
+  # - /owner eval <código> - Executa código Python
+  # - /owner sql <query> - Executa SQL no banco
+  # - /owner config <servidor> - Configura servidor específico
+  # - /owner globalban <user> - Bane usuário globalmente
+  # - /owner stats - Estatísticas globais
+
+
+#╔══════════════════════════════════════════════════════════════════════════════╗
+#║ 3. BANCO DE DADOS                                                            ║
+#╚══════════════════════════════════════════════════════════════════════════════╝
+
+database:
+  # Caminho do banco SQLite
+  path: "data/bot_database.db"
+  
+  # Backup automático
+  backup:
+    enabled: true
+    interval_minutes: 120
+    keep_count: 10
+
+
+#╔══════════════════════════════════════════════════════════════════════════════╗
+#║ 4. PROVEDORES DE LLM                                                         ║
+#╚══════════════════════════════════════════════════════════════════════════════╝
+#
+# Cada provedor pode ser habilitado/desabilitado individualmente
+# Você pode usar quantos quiser simultaneamente!
+
+providers:
+  # ═══════════════════════════════════════════════════════════════════════════
+  # OPENAI (GPT-4, GPT-4o, GPT-5, DALL-E, Whisper, etc)
+  # ═══════════════════════════════════════════════════════════════════════════
+  openai:
+    enabled: true
+    api_key: ""           # OPENAI_API_KEY no .env
+    base_url: "https://api.openai.com/v1"
+    models:
+      - name: "gpt-4o"
+        id: "gpt-4o"
+        max_tokens: 4096
+        temperature: 0.9
+        vision: true
+        tools: true
+        cost_input: 0.005    # $ por 1K tokens
+        cost_output: 0.015
+      
+      - name: "gpt-4o-mini"
+        id: "gpt-4o-mini"
+        max_tokens: 4096
+        temperature: 0.9
+        vision: true
+        tools: true
+        cost_input: 0.00015
+        cost_output: 0.0006
+      
+      - name: "gpt-5"
+        id: "gpt-5"
+        max_tokens: 8192
+        temperature: 0.9
+        vision: true
+        tools: true
+        cost_input: 0.01
+        cost_output: 0.03
+      
+      - name: "gpt-5-mini"
+        id: "gpt-5-mini"
+        max_tokens: 4096
+        temperature: 0.9
+        vision: true
+        tools: true
+        cost_input: 0.001
+        cost_output: 0.003
+  
+  # ═══════════════════════════════════════════════════════════════════════════
+  # ANTHROPIC (Claude 3, Claude 4)
+  # ═══════════════════════════════════════════════════════════════════════════
+  anthropic:
+    enabled: false
+    api_key: ""           # ANTHROPIC_API_KEY no .env
+    base_url: "https://api.anthropic.com/v1"
+    models:
+      - name: "claude-sonnet-4"
+        id: "claude-sonnet-4-20250514"
+        max_tokens: 4096
+        temperature: 0.9
+        vision: true
+        tools: true
+      
+      - name: "claude-opus-4"
+        id: "claude-opus-4-20250514"
+        max_tokens: 4096
+        temperature: 0.9
+        vision: true
+        tools: true
+  
+  # ═══════════════════════════════════════════════════════════════════════════
+  # GROQ (Llama, Mixtral - Rápido e barato!)
+  # ═══════════════════════════════════════════════════════════════════════════
+  groq:
+    enabled: false
+    api_key: ""           # GROQ_API_KEY no .env
+    base_url: "https://api.groq.com/openai/v1"
+    models:
+      - name: "llama-3.3-70b"
+        id: "llama-3.3-70b-versatile"
+        max_tokens: 4096
+        temperature: 0.9
+        vision: false
+        tools: true
+      
+      - name: "mixtral-8x7b"
+        id: "mixtral-8x7b-32768"
+        max_tokens: 4096
+        temperature: 0.9
+        vision: false
+        tools: true
+  
+  # ═══════════════════════════════════════════════════════════════════════════
+  # TOGETHER AI (Vários modelos open source)
+  # ═══════════════════════════════════════════════════════════════════════════
+  together:
+    enabled: false
+    api_key: ""           # TOGETHER_API_KEY no .env
+    base_url: "https://api.together.xyz/v1"
+    models:
+      - name: "llama-3-70b"
+        id: "meta-llama/Llama-3-70b-chat-hf"
+        max_tokens: 4096
+        temperature: 0.9
+        vision: false
+        tools: false
+  
+  # ═══════════════════════════════════════════════════════════════════════════
+  # XAI (Grok)
+  # ═══════════════════════════════════════════════════════════════════════════
+  xai:
+    enabled: false
+    api_key: ""           # XAI_API_KEY no .env
+    base_url: "https://api.x.ai/v1"
+    models:
+      - name: "grok-3"
+        id: "grok-3"
+        max_tokens: 4096
+        temperature: 0.9
+        vision: false
+        tools: true
+  
+  # ═══════════════════════════════════════════════════════════════════════════
+  # MISTRAL AI
+  # ═══════════════════════════════════════════════════════════════════════════
+  mistral:
+    enabled: false
+    api_key: ""           # MISTRAL_API_KEY no .env
+    base_url: "https://api.mistral.ai/v1"
+    models:
+      - name: "mistral-large"
+        id: "mistral-large-latest"
+        max_tokens: 4096
+        temperature: 0.9
+        vision: false
+        tools: true
+  
+  # ═══════════════════════════════════════════════════════════════════════════
+  # GOOGLE (Gemini)
+  # ═══════════════════════════════════════════════════════════════════════════
+  google:
+    enabled: false
+    api_key: ""           # GOOGLE_API_KEY no .env
+    base_url: "https://generativelanguage.googleapis.com/v1beta"
+    models:
+      - name: "gemini-2.0-flash"
+        id: "gemini-2.0-flash"
+        max_tokens: 4096
+        temperature: 0.9
+        vision: true
+        tools: true
+  
+  # ═══════════════════════════════════════════════════════════════════════════
+  # COHERE
+  # ═══════════════════════════════════════════════════════════════════════════
+  cohere:
+    enabled: false
+    api_key: ""           # COHERE_API_KEY no .env
+    base_url: "https://api.cohere.ai/v1"
+    models:
+      - name: "command-r-plus"
+        id: "command-r-plus"
+        max_tokens: 4096
+        temperature: 0.9
+        vision: false
+        tools: true
+  
+  # ═══════════════════════════════════════════════════════════════════════════
+  # OPENROUTER (Acesso a vários modelos)
+  # ═══════════════════════════════════════════════════════════════════════════
+  openrouter:
+    enabled: false
+    api_key: ""           # OPENROUTER_API_KEY no .env
+    base_url: "https://openrouter.ai/api/v1"
+    extra_headers:
+      X-Title: "Discord-AI-Bot"
+    models:
+      - name: "claude-3.5-sonnet"
+        id: "anthropic/claude-3.5-sonnet"
+        max_tokens: 4096
+        temperature: 0.9
+        vision: true
+        tools: true
+  
+  # ═══════════════════════════════════════════════════════════════════════════
+  # LLMs LOCAIS (Ollama, LM Studio, etc)
+  # ═══════════════════════════════════════════════════════════════════════════
+  # 
+  # Para usar LLMs locais:
+  # 1. Instale Ollama (https://ollama.com) ou LM Studio
+  # 2. Baixe um modelo (ex: llama3, mistral, codellama)
+  # 3. Inicie o servidor local
+  # 4. Configure abaixo
+  
+  ollama:
+    enabled: false
+    # Não precisa de API key para Ollama local
+    api_key: "ollama"
+    base_url: "http://localhost:11434/v1"
+    models:
+      - name: "llama3-local"
+        id: "llama3"
+        max_tokens: 4096
+        temperature: 0.9
+        vision: false
+        tools: false
+      
+      - name: "mistral-local"
+        id: "mistral"
+        max_tokens: 4096
+        temperature: 0.9
+        vision: false
+        tools: false
+      
+      - name: "codellama-local"
+        id: "codellama"
+        max_tokens: 4096
+        temperature: 0.7
+        vision: false
+        tools: false
+  
+  lmstudio:
+    enabled: false
+    api_key: "lm-studio"
+    base_url: "http://localhost:1234/v1"
+    models:
+      - name: "local-model"
+        id: "local-model"  # LM Studio detecta automaticamente
+        max_tokens: 4096
+        temperature: 0.9
+        vision: false
+        tools: false
+  
+  # ═══════════════════════════════════════════════════════════════════════════
+  # VLLM (Para servir modelos localmente com alta performance)
+  # ═══════════════════════════════════════════════════════════════════════════
+  vllm:
+    enabled: false
+    api_key: "vllm"
+    base_url: "http://localhost:8000/v1"
+    models:
+      - name: "vllm-model"
+        id: "model-name"
+        max_tokens: 4096
+        temperature: 0.9
+        vision: false
+        tools: false
+
+
+#╔══════════════════════════════════════════════════════════════════════════════╗
+#║ 5. MODELO PADRÃO                                                             ║
+#╚══════════════════════════════════════════════════════════════════════════════╝
+
+# Modelo usado quando nenhum outro for especificado
+# Formato: "provedor/nome-do-modelo"
+default_model: "openai/gpt-4o-mini"
+
+# Modelo para tarefas leves (classificação, decisões rápidas)
+fast_model: "openai/gpt-4o-mini"
+
+# Modelo para geração de imagens
+image_model: "openai/dall-e-3"
+
+
+#╔══════════════════════════════════════════════════════════════════════════════╗
+#║ 6. OPENAI ASSISTANT API (OPCIONAL)                                           ║
+#╚══════════════════════════════════════════════════════════════════════════════╝
+
+assistant:
+  # ID do Assistant da OpenAI (crie em https://platform.openai.com/assistants)
+  id: ""                # OPENAI_ASSISTANT_ID no .env
+  
+  # Ferramentas disponíveis para o Assistant
+  tools:
+    code_interpreter: true
+    file_search: true
+    functions:
+      - google_search
+      - get_file_by_name
+
+
+#╔══════════════════════════════════════════════════════════════════════════════╗
+#║ 7. CONFIGURAÇÕES POR SERVIDOR (DEFAULTS)                                     ║
+#╚══════════════════════════════════════════════════════════════════════════════╝
+#
+# Estas são as configurações padrão quando o bot entra em um novo servidor.
+# Cada servidor pode ter suas próprias configurações que sobrescrevem estas.
+
+guild_defaults:
+  # Modelo padrão para o servidor
+  model: "openai/gpt-4o-mini"
+  
+  # Prompt do sistema
+  system_prompt: "Você é um assistente de IA amigável e prestativo."
+  
+  # Modo de operação
+  # options: disabled, normal, smart, fluid, frenetic, roleplay
+  mode: "smart"
+  
+  # Gatilhos de resposta
+  triggers:
+    # Sempre responder em reply às mensagens do bot
+    reply_to_bot: true
+    
+    # Responder quando mencionado (@Bot)
+    on_mention: true
+    
+    # Responder quando usar prefixo (!comando)
+    on_prefix: false
+    prefix: "!"
+    
+    # Responder quando mensagem começa com ?
+    on_question: false
+    
+    # Modo chatbot (responde sem gatilhos, usa IA para decidir)
+    chatbot_mode: false
+    chatbot_sensitivity: "normal"  # low, normal, high
+  
+  # Memória
+  memory:
+    enabled: true
+    max_messages: 50
+    context_hours: 24
+  
+  # Segurança
+  safety: "standard"  # none, low, medium, standard, high, strict
+  
+  # Cota de imagens para novos usuários
+  image_quota: 5
+
+
+#╔══════════════════════════════════════════════════════════════════════════════╗
+#║ 8. PERMISSÕES POR SERVIDOR                                                   ║
+#╚══════════════════════════════════════════════════════════════════════════════╝
+#
+# Configure permissões específicas para cada servidor
+# O dono do bot sempre tem acesso total!
+
+guild_permissions:
+  # Exemplo de configuração para um servidor específico:
+  # "123456789012345678":  # ID do servidor
+  #   admins:
+  #     users: [987654321098765432]
+  #     roles: [111111111111111111]
+  #   blocked:
+  #     users: [222222222222222222]
+  #     roles: [333333333333333333]
+  #     channels: [444444444444444444]
+  #   allowed_channels: [555555555555555555]  # Vazio = todos
+  #   
+  #   # Configurações específicas
+  #   model: "openai/gpt-4o"
+  #   system_prompt: "Você é um assistente para este servidor específico."
+
+
+#╔══════════════════════════════════════════════════════════════════════════════╗
+#║ 9. SISTEMA DE MEMÓRIA HIERÁRQUICA                                            ║
+#╚══════════════════════════════════════════════════════════════════════════════╝
+#
+# O bot usa um sistema de memória que imita a memória humana:
+# - Curto Prazo: Conversas recentes (1-3 dias)
+# - Médio Prazo: Resumos de curto prazo (acessados ocasionalmente)
+# - Longo Prazo: Memórias importantes (6+ meses, apaga se não usada)
+#
+# Cada camada pode usar um provedor diferente!
+
+memory:
+  # ═════════════════════════════════════════════════════════════════════════════
+  # CONFIGURAÇÃO DAS CAMADAS DE MEMÓRIA
+  # ═════════════════════════════════════════════════════════════════════════════
+  
+  # Provedores disponíveis:
+  # - sqlite: Padrão, simples, sem embeddings (recomendado para iniciantes)
+  # - qdrant: Vector store local com embeddings (recomendado)
+  # - chroma: ChromaDB local com embeddings
+  # - pinecone: Nuvem (requer API key)
+  # - redis: Cache rápido (bom para curto prazo)
+  # - oracle: Oracle Cloud (requer configuração)
+  
+  tiers:
+    # ═══════════════════════════════════════════════════════════════════════════
+    # CURTO PRAZO: Todas as conversas recentes (1-3 dias)
+    # Contém: Conversas completas, detalhadas, recentes
+    # Acesso: SEMPRE quando o bot responde
+    # Destino: Resumida e promovida para médio prazo após 3 dias
+    # ═══════════════════════════════════════════════════════════════════════════
+    short_term:
+      # Dias de retenção antes de resumir
+      retention_days: 3
+      
+      # Provedor: sqlite, qdrant, chroma, pinecone, redis
+      provider: "sqlite"
+      
+      # Configuração específica do provedor
+      config:
+        # ═══ SQLite (Padrão - funciona sem instalar nada) ═══
+        db_path: "data/memory_short_term.db"
+        
+        # ═══ Qdrant Local ═══
+        # host: "localhost"
+        # port: 6333
+        
+        # ═══ Qdrant Cloud (Nuvem - 1GB Grátis!) ═══
+        # url: "https://seu-cluster.cloud.qdrant.io"
+        # api_key: "${QDRANT_API_KEY}"
+        
+        # ═══ Chroma ═══
+        # persist_directory: "data/chroma"
+        
+        # ═══ Pinecone (Nuvem) ═══
+        # api_key: "${PINECONE_API_KEY}"
+        # environment: "us-west1-gcp"
+        
+        # ═══ Redis ═══
+        # host: "localhost"
+        # port: 6379
+        # password: "${REDIS_PASSWORD}"
+    
+    # ═══════════════════════════════════════════════════════════════════════════
+    # MÉDIO PRAZO: Resumos de curto prazo
+    # Contém: Resumos das conversas antigas, pontos importantes
+    # Acesso: Ocasionalmente, quando relevante
+    # Destino: Promovido para longo prazo se muito acessado (5+ vezes)
+    # ═══════════════════════════════════════════════════════════════════════════
+    medium_term:
+      provider: "sqlite"
+      config:
+        db_path: "data/memory_medium_term.db"
+        # Ou use as mesmas configurações de qdrant/redis acima
+    
+    # ═══════════════════════════════════════════════════════════════════════════
+    # LONGO PRAZO: Memórias MUITO importantes e MUITO acessadas
+    # Contém: Aniversários, preferências, fatos importantes sobre usuários
+    # Acesso: Raramente, só quando muito relevante
+    # Destino: APAGADO se não acessado em 6 meses (o bot ESQUECE!)
+    # 
+    # ⚠️ IMPORTANTE: Isso NÃO é backup! São memórias DIFERENTES que foram
+    # promovidas porque são importantes. Se não forem mencionadas, o bot
+    # esquece, igual uma pessoa esquece coisas do passado!
+    # ═══════════════════════════════════════════════════════════════════════════
+    long_term:
+      # Meses de retenção (memórias NÃO acessadas são APAGADAS!)
+      retention_months: 6
+      
+      # Importância mínima para promoção (0.0-1.0)
+      min_importance: 0.6
+      
+      # Acessos mínimos para promoção do médio para longo prazo
+      min_access_count: 5
+      
+      provider: "sqlite"
+      config:
+        db_path: "data/memory_long_term.db"
+        # Ou use as mesmas configurações de qdrant/redis acima
+  
+  # ═════════════════════════════════════════════════════════════════════════════
+  # CONFIGURAÇÕES AVANÇADAS
+  # ═════════════════════════════════════════════════════════════════════════════
+  
+  # Usar mesma configuração para todas as camadas (sobrescreve tiers acima)
+  # Útil para usar um único provedor para tudo
+  unified:
+    enabled: false
+    provider: "qdrant"
+    config:
+      host: "localhost"
+      port: 6333
+  
+  # Configurações de embeddings (para provedores com vector search)
+  embeddings:
+    # Provedor de embeddings: local, openai, cohere, google
+    provider: "local"
+    
+    # Modelo (para OpenAI/Cohere/Google)
+    # model: "text-embedding-3-small"
+    
+    # Dimensão dos vetores (ajuste conforme o modelo)
+    dimensions: 32
+  
+  # Manutenção automática
+  maintenance:
+    # Rodar manutenção a cada X horas
+    interval_hours: 24
+    
+    # Horário preferido (formato 24h)
+    preferred_time: "03:00"
+    
+    # Resumir memórias antigas automaticamente
+    auto_summarize: true
+    
+    # Apagar memórias não usadas
+    auto_cleanup: true
+  
+  # ═════════════════════════════════════════════════════════════════════════════
+  # CONFIGURAÇÕES POR CONTEXTO (Servidor/DM/Canal)
+  # ═════════════════════════════════════════════════════════════════════════════
+  
+  # Você pode configurar memória DIFERENTE para:
+  # - Cada servidor (guild_ID)
+  # - Cada canal (channel_ID)
+  # - DMs (dm)
+  # 
+  # Isso permite que cada lugar tenha sua própria memória isolada!
+  
+  contexts:
+    # Configuração para DMs (chat privado)
+    # Cada usuário tem sua própria memória isolada!
+    "dm":
+      short_term:
+        retention_days: 3
+        provider: "sqlite"
+        config:
+          db_path: "data/memory_dm.db"
+    
+    # Exemplo: Servidor específico com memória diferente
+    # "guild_123456789012345678":
+    #   short_term:
+    #     provider: "qdrant"
+    #     config:
+    #       host: "localhost"
+    #       port: 6333
+    # 
+    # Exemplo: Canal específico com memória maior
+    # "channel_987654321098765432":
+    #   short_term:
+    #     retention_days: 7  # Guarda 7 dias neste canal
+    #     provider: "redis"
+    #     config:
+    #       host: "localhost"
+    #       port: 6379
+  
+  # ═════════════════════════════════════════════════════════════════════════════
+  # CONFIGURAÇÃO LEGACY (para compatibilidade)
+  # ═════════════════════════════════════════════════════════════════════════════
+  
+  # Vector Store para RAG (sistema antigo, será migrado)
+  vector_store:
+    # Backend: sqlite, pinecone, qdrant, redis, pgvector
+    backend: "sqlite"
+    
+    # Modelo de embeddings
+    embedding_model: "text-embedding-3-small"
+    
+    # Configurações específicas por backend
+    pinecone:
+      api_key: ""       # PINECONE_API_KEY no .env
+      index_name: "discord-bot-memory"
+      environment: "us-east-1"
+    
+    qdrant:
+      url: ""           # QDRANT_URL no .env
+      api_key: ""       # QDRANT_API_KEY no .env
+      collection_name: "discord-bot-memory"
+    
+    redis:
+      url: "redis://localhost:6379"
+      password: ""      # REDIS_PASSWORD no .env
+    
+    pgvector:
+      host: "localhost"
+      port: 5432
+      database: "botdb"
+      user: "botuser"
+      password: ""      # PGVECTOR_PASSWORD no .env
+  
+  # Cache semântico (LangCache)
+  semantic_cache:
+    enabled: false
+    similarity_threshold: 0.95
+
+
+#╔══════════════════════════════════════════════════════════════════════════════╗
+#║ 10. GERAÇÃO DE IMAGENS                                                       ║
+#╚══════════════════════════════════════════════════════════════════════════════╝
+#
+# Cada usuário tem sua própria cota semanal!
+# A cota reseta automaticamente toda semana.
+
+image_generation:
+  enabled: true
+  provider: "openai"    # openai, together, stability
+  model: "dall-e-3"
+  
+  # Cotas (POR USUÁRIO!)
+  quotas:
+    weekly_default: 5      # 5 imagens por semana para cada usuário
+    max_per_user: 50       # Máximo acumulado por usuário
+    
+    # O dono do bot tem cota ilimitada!
+    # Use /loja para comprar mais gerações
+  
+  # Tamanhos permitidos
+  sizes:
+    - "1024x1024"
+    - "1792x1024"
+    - "1024x1792"
+  
+  # Qualidade
+  quality: "standard"   # standard, hd
+
+
+#╔══════════════════════════════════════════════════════════════════════════════╗
+#║ 11. LOJA                                                                     ║
+#╚══════════════════════════════════════════════════════════════════════════════╝
+
+shop:
+  enabled: true
+  currency:
+    name: "Tokens"
+    symbol: "🪙"
+    starting_balance: 100
+  
+  # Itens disponíveis na loja
+  items:
+    image_quota_5:
+      name: "📸 Cota de Imagens (+5)"
+      description: "Adicione 5 gerações de imagem à sua conta"
+      cost: 50
+      effect: "add_image_quota"
+      value: 5
+    
+    image_quota_20:
+      name: "📸 Cota de Imagens (+20)"
+      description: "Adicione 20 gerações de imagem à sua conta"
+      cost: 150
+      effect: "add_image_quota"
+      value: 20
+      discount: 25  # % de desconto comparado a comprar 4x o +5
+    
+    premium_summary:
+      name: "📝 Resumo Premium"
+      description: "Gere um resumo avançado de qualquer conversa"
+      cost: 30
+      effect: "unlock_feature"
+      value: "premium_summary"
+      uses: 1
+    
+    memory_boost:
+      name: "🧠 Boost de Memória"
+      description: "Aumente a retenção de memória por 7 dias"
+      cost: 100
+      effect: "boost_memory"
+      value: 7
+    
+    custom_persona:
+      name: "🎭 Persona Personalizada"
+      description: "Crie uma persona customizada permanente"
+      cost: 500
+      effect: "unlock_feature"
+      value: "custom_persona_slot"
+
+
+#╔══════════════════════════════════════════════════════════════════════════════╗
+#║ 12. BUSCA NA WEB (GOOGLE CUSTOM SEARCH)                                      ║
+#╚══════════════════════════════════════════════════════════════════════════════╝
+
+web_search:
+  enabled: false
+  provider: "google"
+  
+  google:
+    api_key: ""         # GOOGLE_CSE_API_KEY no .env
+    cx: ""              # GOOGLE_CSE_CX no .env
+    results_count: 3
+  
+  # Outros provedores de busca podem ser adicionados
+  # duckduckgo:
+  #   enabled: false
+  # brave:
+  #   enabled: false
+  #   api_key: ""
+
+
+#╔══════════════════════════════════════════════════════════════════════════════╗
+#║ 13. LIMITES E SEGURANÇA                                                      ║
+#╚══════════════════════════════════════════════════════════════════════════════╝
+
+limits:
+  # Tamanho máximo de mensagens
+  max_message_length: 2000
+  
+  # Máximo de imagens por mensagem
+  max_images_per_message: 5
+  
+  # Máximo de caracteres em prompt de imagem
+  max_image_prompt_length: 1000
+  
+  # Rate limiting (por usuário)
+  rate_limit:
+    enabled: true
+    requests_per_minute: 30
+    cooldown_seconds: 5
+
+safety:
+  # Modo de segurança padrão
+  # none: Sem filtros
+  # low: Apenas conteúdo extremo
+  # medium: Discurso de ódio
+  # standard: Padrão do modelo
+  # high: Família
+  # strict: Educação
+  default_mode: "standard"
+  
+  # Palavras bloqueadas (adicione aqui)
+  blocked_keywords: []
+  
+  # Permitir DMs
+  allow_dm: true
+
+
+#╔══════════════════════════════════════════════════════════════════════════════╗
+#║ 14. LOGGING                                                                  ║
+#╚══════════════════════════════════════════════════════════════════════════════╝
+
+logging:
+  level: "INFO"         # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  to_file: true
+  directory: "data/logs"
+  max_file_size: "10MB"
+  backup_count: 5
+
+
+#╔══════════════════════════════════════════════════════════════════════════════╗
+#║ 15. FEATURES EXPERIMENTAIS                                                   ║
+#╚══════════════════════════════════════════════════════════════════════════════╝
+
+experimental:
+  # Streaming de respostas
+  streaming: false
+  
+  # Auto-correção de erros
+  auto_retry: true
+  max_retries: 3
+  
+  # Análise de sentimento automática
+  sentiment_analysis: false
+  
+  # Detecção de idioma automática
+  auto_language: true
